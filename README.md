@@ -40,9 +40,10 @@ X: 1, 2, 3, 4, 5
 Y: 2, 4, 6, 8, 10  
 The application will:
 Plot the data points.
+
 Calculate the regression line with the equation:
 Y = 2X + 0
-Display R² = 1.0.
+Display R² = 1.0. (Coming Soon)
 Screenshots
 Coming Soon
 
