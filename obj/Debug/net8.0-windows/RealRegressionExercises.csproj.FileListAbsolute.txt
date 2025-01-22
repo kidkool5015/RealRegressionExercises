@@ -72,3 +72,4 @@ C:\Users\lucky\source\repos\RealRegressionExercises\obj\Debug\net8.0-windows\ref
 C:\Users\lucky\source\repos\RealRegressionExercises\obj\Debug\net8.0-windows\RealRegressionExercises.pdb
 C:\Users\lucky\source\repos\RealRegressionExercises\obj\Debug\net8.0-windows\RealRegressionExercises.genruntimeconfig.cache
 C:\Users\lucky\source\repos\RealRegressionExercises\obj\Debug\net8.0-windows\ref\RealRegressionExercises.dll
+C:\Users\lucky\source\repos\RealRegressionExercises\obj\Debug\net8.0-windows\RealRegressionExercises.sourcelink.json

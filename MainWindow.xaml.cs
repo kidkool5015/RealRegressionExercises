@@ -1,24 +1,14 @@
 ﻿using System.Text;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Xml.Linq;
 using ScottPlot;
 using ScottPlot.WPF;
 using OfficeOpenXml;
 using System.IO;
 using ScottPlot.Plottables;
-using OpenTK.Graphics.OpenGL;
-using System.Reflection.Metadata.Ecma335;
-using System.Drawing.Imaging;
 using System.Diagnostics;
 using ScottPlot.Colormaps;
+using OpenTK.Graphics.OpenGL;
 
 
 namespace RealRegressionExercises
@@ -41,7 +31,7 @@ namespace RealRegressionExercises
         public double[] GetData(int col = 2)
         {
             string file_path = "C:\\Users\\lucky\\OneDrive\\Desktop\\ShoppingData.xlsx";
-            
+
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -51,19 +41,21 @@ namespace RealRegressionExercises
                 int rowCount = worksheet.Dimension.Rows;
                 double[] data = new double[rowCount];
                 Trace.WriteLine(col);
-                for (int i = 2; i <= rowCount/30 ; i++)
+                for (int i = 2; i <= rowCount / 30; i++)
                 {
-                    
+
                     data[i - 2] = (double)worksheet.Cells[i, col].Value;
-                    
+
                 }
-                
+
                 data = data.Where(x => x != 0).ToArray();
+
+
 
 
                 return data;
             }
-           
+
 
         }
 
@@ -71,8 +63,8 @@ namespace RealRegressionExercises
         {
             double CoVar = 0.0;
             double StDevX = 0.0;
-            double MeanX = 0.0;
-            double MeanY = 0.0;
+            double MeanX = GetMean(xData);
+            double MeanY = GetMean(yData);
             double Coeff = 0.0;
 
             int dataSize = xData.Length;
@@ -118,26 +110,21 @@ namespace RealRegressionExercises
             return max;
         }
 
-        public double Regression(double[] x, double[] y)
+        public double Regression(double[] x, double[] y, double intercept)
         {
             double Coeff = GetCoeff(x, y);
             Trace.WriteLine(Coeff);
-            double[] yFit = new double[x.Length];
-            for (int i = 0; i < x.Length; i++)
-            {
-                yFit[i] = Coeff * x[i];
-            }
-            int sizeData = x.Length;
+            double[] yFit = GetFit(Coeff, x);
+
             double xMin = GetMin(x);
             double xMax = GetMax(x);
 
-            double yFitMin = GetMin(yFit);
+            double yMin = GetMin(y);
             double yFitMax = GetMax(yFit);
 
-            double yAdjust = yFitMax - yFitMin;
 
             //Find a way to remove the + 60 and have the line plot in the middle of the plot
-            LinePlot line = MyWpfPlot.Plot.Add.Line(xMin, yFitMin + 60, xMax, yFitMax + 60);
+            LinePlot line = MyWpfPlot.Plot.Add.Line(xMin, yMin + intercept, xMax, yFitMax + intercept);
             //Set the line color and width (Make it thicker/More Dark)
 
             line.LineColor = Generate.RandomColor();
@@ -150,11 +137,15 @@ namespace RealRegressionExercises
         public void Button_Click(object sender, RoutedEventArgs e)
         {
             Trace.WriteLine("Click");
-            BottomBox.Text = "Slope = " + Math.Round(GetCoeff(GetData(Col1), GetData(Col2)),2);
 
-            double[] xData = GetData(Col1);
-            double[] yData = GetData(Col2);
-         
+            double[] xData = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            double[] yData = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            //double[] xData = GetData(Col1);
+            //double[] yData = GetData(Col2);
+            double[] yFit = GetFit(GetCoeff(xData, yData), xData);
+            double yIntercept = Intercept(GetMean(xData), GetMean(yData), GetCoeff(xData, yData));
+
+
 
             InitializeComponent();
 
@@ -164,7 +155,10 @@ namespace RealRegressionExercises
 
 
             MyWpfPlot.Plot.Add.ScatterPoints(xData, yData);
-            Regression(xData, yData);
+            Regression(xData, yData, yIntercept);
+
+            BottomBox.Text = "Slope = " + Math.Round(GetCoeff(GetData(Col1), GetData(Col2)), 2) + "+" + Math.Round(yIntercept, 2) + "\n" +
+                "your R2 value for the fit is: " + Math.Round(doubleR(yData, yFit), 3);
 
             MyWpfPlot.Plot.Axes.AutoScale();
             MyWpfPlot.Refresh();
@@ -184,5 +178,53 @@ namespace RealRegressionExercises
             Col2 = int.Parse(text2);
             Trace.WriteLine(Col2);
         }
+
+        public double[] GetFit(double Coeff, double[] data)
+        {
+            double[] yFit = new double[data.Length];
+            for (int i = 0; i < data.Length; i++)
+            {
+                yFit[i] = Coeff * data[i];
+            }
+            return yFit;
+
+
+        }
+
+        public double GetMean(double[] data)
+        {
+            double sum = 0.0;
+            for (int i = 0; i < data.Length; i++)
+            {
+                sum += data[i];
+            }
+            return sum / data.Length;
+        }
+
+        public double doubleR(double[] actual, double[] fit)
+        {
+
+            double RestSum = 0.0;
+            double TotalSum = 0.0;
+
+            for (int i = 0; i < actual.Length; i++)
+            {
+                RestSum += Math.Pow(actual[i] - fit[i], 2);
+                TotalSum += Math.Pow(actual[i] - GetMean(actual), 2);
+            }
+            Trace.WriteLine("RestSum:" + RestSum / TotalSum);
+
+
+            return 1 - (RestSum / TotalSum);
+        }
+
+        public double Intercept(double xMean, double yMean, double Coeff)
+        {
+            return yMean - Coeff * xMean;
+        }
     }
 }
+
+//Make Classes for Data, Math, Plotting (Main Program with button presses/word boxes)
+//Function to modify text box to include various columns
+
