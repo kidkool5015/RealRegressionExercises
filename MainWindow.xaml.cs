@@ -68,11 +68,6 @@ namespace RealRegressionExercises
             double Coeff = 0.0;
 
             int dataSize = xData.Length;
-            for (int i = 0; i < dataSize; i++)
-            {
-                MeanX += xData[i] / dataSize;
-                MeanY += yData[i] / dataSize;
-            }
 
             for (int i = 0; i < dataSize; i++)
             {
@@ -114,7 +109,7 @@ namespace RealRegressionExercises
         {
             double Coeff = GetCoeff(x, y);
             Trace.WriteLine(Coeff);
-            double[] yFit = GetFit(Coeff, x);
+            double[] yFit = GetFit(Coeff, x, intercept);
 
             double xMin = GetMin(x);
             double xMax = GetMax(x);
@@ -123,12 +118,10 @@ namespace RealRegressionExercises
             double yFitMax = GetMax(yFit);
 
 
-            //Find a way to remove the + 60 and have the line plot in the middle of the plot
-            LinePlot line = MyWpfPlot.Plot.Add.Line(xMin, yMin + intercept, xMax, yFitMax + intercept);
-            //Set the line color and width (Make it thicker/More Dark)
 
-            line.LineColor = Generate.RandomColor();
-            line.LineWidth = 4;
+            MyWpfPlot.Plot.Add.ScatterPoints(x,yFit);
+            
+
 
             return Coeff;
 
@@ -138,12 +131,13 @@ namespace RealRegressionExercises
         {
             Trace.WriteLine("Click");
 
-            double[] xData = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            double[] yData = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            //double[] xData = GetData(Col1);
-            //double[] yData = GetData(Col2);
-            double[] yFit = GetFit(GetCoeff(xData, yData), xData);
+            //double[] xData = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            //double[] yData = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            double[] xData = GetData(Col1);
+            double[] yData = GetData(Col2);
             double yIntercept = Intercept(GetMean(xData), GetMean(yData), GetCoeff(xData, yData));
+            double[] yFit = GetFit(GetCoeff(xData, yData), xData, yIntercept);
+            
 
 
 
@@ -157,7 +151,7 @@ namespace RealRegressionExercises
             MyWpfPlot.Plot.Add.ScatterPoints(xData, yData);
             Regression(xData, yData, yIntercept);
 
-            BottomBox.Text = "Slope = " + Math.Round(GetCoeff(GetData(Col1), GetData(Col2)), 2) + "+" + Math.Round(yIntercept, 2) + "\n" +
+            BottomBox.Text = "Slope = " + Math.Round(GetCoeff(xData, yData), 2) + "\n" +
                 "your R2 value for the fit is: " + Math.Round(doubleR(yData, yFit), 3);
 
             MyWpfPlot.Plot.Axes.AutoScale();
@@ -179,12 +173,12 @@ namespace RealRegressionExercises
             Trace.WriteLine(Col2);
         }
 
-        public double[] GetFit(double Coeff, double[] data)
+        public double[] GetFit(double Coeff, double[] data, double intercept)
         {
             double[] yFit = new double[data.Length];
             for (int i = 0; i < data.Length; i++)
             {
-                yFit[i] = Coeff * data[i];
+                yFit[i] = (Coeff * data[i]) + intercept;
             }
             return yFit;
 
@@ -206,22 +200,36 @@ namespace RealRegressionExercises
 
             double RestSum = 0.0;
             double TotalSum = 0.0;
+            double adjR = 0.0;
 
             for (int i = 0; i < actual.Length; i++)
             {
-                RestSum += Math.Pow(actual[i] - fit[i], 2);
+                RestSum = ResSum(actual, fit);
                 TotalSum += Math.Pow(actual[i] - GetMean(actual), 2);
             }
             Trace.WriteLine("RestSum:" + RestSum / TotalSum);
 
+            adjR = 1 - (RestSum / TotalSum);
 
-            return 1 - (RestSum / TotalSum);
+            return 1-((1- adjR) * (actual.Length - 1) / (actual.Length - 3));
         }
 
         public double Intercept(double xMean, double yMean, double Coeff)
         {
             return yMean - Coeff * xMean;
         }
+
+        public double ResSum(double[] actual, double[] fit)
+        {
+            double ResSum = 0.0;
+            for (int i = 0; i < actual.Length; i++)
+            {
+                ResSum += Math.Pow(actual[i] - fit[i], 2);
+            }
+            return ResSum;
+        }
+
+
     }
 }
 
