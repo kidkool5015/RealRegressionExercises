@@ -18,19 +18,109 @@ namespace RealRegressionExercises
     {
         int Col1;
         int Col2;
+        Calcs Maths = new Calcs();
+        Plotting Plotting = new Plotting();
+        string file_path = "C:\\Users\\lucky\\OneDrive\\Desktop\\ShoppingData.xlsx";
+
 
         public MainWindow()
         {
 
+            
 
 
         }
 
+        /// <summary>
+        /// Performs the Calculation for the Linear Regression Rate and displays it.
+        /// </summary>
+        /// <param name="x"> The x values for the input data </param>
+        /// <param name="y"> The x values for the input data </param>
+        /// <returns> Nothing. </returns>
 
-
-        public double[] GetData(int col = 2)
+        public void Regression(double[] x, double[] y, double intercept)
         {
-            string file_path = "C:\\Users\\lucky\\OneDrive\\Desktop\\ShoppingData.xlsx";
+            double Coeff = Maths.GetCoeff(x, y);
+            Trace.WriteLine(Coeff);
+            double[] yFit = Plotting.GetFit(Coeff, x, intercept);
+
+            double xMin = Maths.GetMin(x);
+            double xMax = Maths.GetMax(x);
+
+            double yMin = Maths.GetMin(y);
+            double yFitMax = Maths.GetMax(yFit);
+
+
+
+            MyWpfPlot.Plot.Add.ScatterPoints(x,yFit);
+            
+
+
+        }
+        
+        public void Button_Click(object sender, RoutedEventArgs e)
+        {
+            Trace.WriteLine("Click");
+            Program();
+
+        }
+
+        public void TextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            string text = ((TextBox)sender).Text;
+            Col1 = int.Parse(text);
+        }
+
+        private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
+        {
+            //Introduce some catches for wrong input
+            string text2 = ((TextBox)sender).Text;
+            Col2 = int.Parse(text2);
+        }
+
+
+        /// <summary>
+        /// Puts into action the program, calculates the relavant data, plots it, and displays information.
+        /// </summary>
+
+        public void Program()
+        {
+            double[] xData = Plotting.GetData(file_path, Col1);
+            double[] yData = Plotting.GetData(file_path, Col2);
+            double yIntercept = Plotting.Intercept(Maths.GetMean(xData), Maths.GetMean(yData), Maths.GetCoeff(xData, yData));
+            double[] yFit = Plotting.GetFit(Maths.GetCoeff(xData, yData), xData, yIntercept);
+
+
+
+            InitializeComponent();
+
+            MyWpfPlot.Plot.Title("Example Plot");
+            MyWpfPlot.Plot.XLabel("X-Axis");
+            MyWpfPlot.Plot.YLabel("Y-Axis");
+
+
+            MyWpfPlot.Plot.Add.ScatterPoints(xData, yData);
+            Regression(xData, yData, yIntercept);
+
+            BottomBox.Text = "Slope = " + Math.Round(Maths.GetCoeff(xData, yData), 2) + "\n" +
+                "your R2 value for the fit is: " + Math.Round(Maths.doubleR(yData, yFit), 3);
+
+            MyWpfPlot.Plot.Axes.AutoScale();
+            MyWpfPlot.Refresh();
+        }
+
+    }
+
+    public class Plotting {
+
+        /// <summary>
+        /// Gets the data from an input excel file.
+        /// </summary>
+        /// <param name="x"> The x values for the input data </param>
+        /// <param name="y"> The x values for the input data </param>
+        /// <returns> Nothing. </returns>
+        public double[] GetData(string file_path, int col = 2 )
+        {
 
 
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -58,6 +148,30 @@ namespace RealRegressionExercises
 
 
         }
+
+        public double[] GetFit(double Coeff, double[] data, double intercept)
+        {
+            double[] yFit = new double[data.Length];
+            for (int i = 0; i < data.Length; i++)
+            {
+                yFit[i] = (Coeff * data[i]) + intercept;
+            }
+            return yFit;
+
+
+        }
+
+        public double Intercept(double xMean, double yMean, double Coeff)
+        {
+            return yMean - Coeff * xMean;
+        }
+
+        
+
+    }
+    
+    public class Calcs
+    {
 
         public double GetCoeff(double[] xData, double[] yData)
         {
@@ -104,87 +218,6 @@ namespace RealRegressionExercises
             }
             return max;
         }
-
-        public double Regression(double[] x, double[] y, double intercept)
-        {
-            double Coeff = GetCoeff(x, y);
-            Trace.WriteLine(Coeff);
-            double[] yFit = GetFit(Coeff, x, intercept);
-
-            double xMin = GetMin(x);
-            double xMax = GetMax(x);
-
-            double yMin = GetMin(y);
-            double yFitMax = GetMax(yFit);
-
-
-
-            MyWpfPlot.Plot.Add.ScatterPoints(x,yFit);
-            
-
-
-            return Coeff;
-
-
-        }
-        public void Button_Click(object sender, RoutedEventArgs e)
-        {
-            Trace.WriteLine("Click");
-
-            //double[] xData = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            //double[] yData = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-            double[] xData = GetData(Col1);
-            double[] yData = GetData(Col2);
-            double yIntercept = Intercept(GetMean(xData), GetMean(yData), GetCoeff(xData, yData));
-            double[] yFit = GetFit(GetCoeff(xData, yData), xData, yIntercept);
-            
-
-
-
-            InitializeComponent();
-
-            MyWpfPlot.Plot.Title("Example Plot");
-            MyWpfPlot.Plot.XLabel("X-Axis");
-            MyWpfPlot.Plot.YLabel("Y-Axis");
-
-
-            MyWpfPlot.Plot.Add.ScatterPoints(xData, yData);
-            Regression(xData, yData, yIntercept);
-
-            BottomBox.Text = "Slope = " + Math.Round(GetCoeff(xData, yData), 2) + "\n" +
-                "your R2 value for the fit is: " + Math.Round(doubleR(yData, yFit), 3);
-
-            MyWpfPlot.Plot.Axes.AutoScale();
-            MyWpfPlot.Refresh();
-        }
-
-        public void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            string text = ((TextBox)sender).Text;
-            Col1 = int.Parse(text);
-            Trace.WriteLine(Col1);
-        }
-
-        private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
-        {
-            //Introduce some catches for wrong input
-            string text2 = ((TextBox)sender).Text;
-            Col2 = int.Parse(text2);
-            Trace.WriteLine(Col2);
-        }
-
-        public double[] GetFit(double Coeff, double[] data, double intercept)
-        {
-            double[] yFit = new double[data.Length];
-            for (int i = 0; i < data.Length; i++)
-            {
-                yFit[i] = (Coeff * data[i]) + intercept;
-            }
-            return yFit;
-
-
-        }
-
         public double GetMean(double[] data)
         {
             double sum = 0.0;
@@ -193,30 +226,6 @@ namespace RealRegressionExercises
                 sum += data[i];
             }
             return sum / data.Length;
-        }
-
-        public double doubleR(double[] actual, double[] fit)
-        {
-
-            double RestSum = 0.0;
-            double TotalSum = 0.0;
-            double adjR = 0.0;
-
-            for (int i = 0; i < actual.Length; i++)
-            {
-                RestSum = ResSum(actual, fit);
-                TotalSum += Math.Pow(actual[i] - GetMean(actual), 2);
-            }
-            Trace.WriteLine("RestSum:" + RestSum / TotalSum);
-
-            adjR = 1 - (RestSum / TotalSum);
-
-            return 1-((1- adjR) * (actual.Length - 1) / (actual.Length - 3));
-        }
-
-        public double Intercept(double xMean, double yMean, double Coeff)
-        {
-            return yMean - Coeff * xMean;
         }
 
         public double ResSum(double[] actual, double[] fit)
@@ -229,6 +238,24 @@ namespace RealRegressionExercises
             return ResSum;
         }
 
+        public double doubleR(double[] actual, double[] fit)
+        {
+
+            double RestSum = 0.0;
+            double TotalSum = 0.0;
+            double adjR = 0.0;
+
+            for (int i = 0; i < actual.Length; i++)
+            {
+                RestSum = this.ResSum(actual, fit);
+                TotalSum += Math.Pow(actual[i] - this.GetMean(actual), 2);
+            }
+            Trace.WriteLine("RestSum:" + RestSum / TotalSum);
+
+            adjR = 1 - (RestSum / TotalSum);
+
+            return 1 - ((1 - adjR) * (actual.Length - 1) / (actual.Length - 3));
+        }
 
     }
 }
