@@ -24,11 +24,13 @@
         <Button Margin="70,26,-320,343" Grid.Column="2" Click="Button_Click" Grid.ColumnSpan="2">
             <TextBlock TextWrapping="Wrap" Text="Generate Graph"/>
         </Button>
+        <Button Margin="70,131,-320,238" Grid.Column="2" Click="Button_Click1" Grid.ColumnSpan="2">
+            <TextBlock TextWrapping="Wrap" Text="Input Text"/>
+        </Button>
         <TextBox Margin="148,250,-242,138" Grid.Column="2" Grid.ColumnSpan="2" TextChanged="TextBox_TextChanged"/>
-        <TextBlock Margin="168,222,-222,189" Grid.Column="2" Grid.ColumnSpan="2" ><Run Language="en-ca" Text="X-Axis"/></TextBlock>
-        <TextBlock x:Name="ListBox" Margin="45,100,-345,217" Grid.Column="2" Grid.ColumnSpan="2" ><Run Language="en-ca" Text="Which data do you want to see from the chosen Data Set?"/><LineBreak/><Run Language="en-ca" Text="1-"/><LineBreak/><Run Language="en-ca" Text="2-"/><LineBreak/><Run Language="en-ca" Text="3-"/><LineBreak/><Run Language="en-ca" Text="4-"/><LineBreak/><Run Language="en-ca" Text="5-"/></TextBlock>
+        <TextBlock Margin="168,222,-222,189" Grid.Column="2" Grid.ColumnSpan="2" Text="" />
         <TextBlock Margin="172,301,-226,110" Grid.Column="2" Grid.ColumnSpan="2" ><Run Language="en-ca" Text="Y"/><Run Text="-Axis"/></TextBlock>
         <TextBox Margin="148,329,-242,57" Grid.Column="2" Grid.ColumnSpan="2" TextChanged="TextBox_TextChanged_1" />
-        <TextBlock x:Name="BottomBox" Margin="65,331,40,26" Grid.Column="1" ><Run Language="en-ca" Text="XDXDXD"/></TextBlock>
+        <TextBlock x:Name="BottomBox" Margin="65,331,40,26" Grid.Column="1" Text="" />
     </Grid>
 </Window>

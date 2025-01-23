@@ -20,7 +20,7 @@ namespace RealRegressionExercises
         int Col2;
         Calcs Maths = new Calcs();
         Plotting Plotting = new Plotting();
-        string file_path = "C:\\Users\\lucky\\OneDrive\\Desktop\\ShoppingData.xlsx";
+        string file_path;
 
 
         public MainWindow()
@@ -30,6 +30,22 @@ namespace RealRegressionExercises
 
 
         }
+
+        public class OpenFileDialog
+        {
+            public string file_path;
+            public OpenFileDialog()
+            {
+                Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
+                dlg.DefaultExt = ".xlsx";
+                dlg.Filter = "Excel Files (*.xlsx)|*.xlsx";
+                Nullable<bool> result = dlg.ShowDialog();
+                if (result == true)
+                {
+                    file_path = dlg.FileName;
+                }
+            }
+        }   
 
         /// <summary>
         /// Performs the Calculation for the Linear Regression Rate and displays it.
@@ -57,7 +73,12 @@ namespace RealRegressionExercises
 
 
         }
-        
+
+        /// <summary>
+        /// Handles the button click event.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         public void Button_Click(object sender, RoutedEventArgs e)
         {
             Trace.WriteLine("Click");
@@ -65,12 +86,22 @@ namespace RealRegressionExercises
 
         }
 
+        /// <summary>
+        /// Handles the text changed event for the first text box.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         public void TextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             string text = ((TextBox)sender).Text;
             Col1 = int.Parse(text);
         }
 
+        /// <summary>
+        /// Handles the text changed event for the second text box.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
         private void TextBox_TextChanged_1(object sender, TextChangedEventArgs e)
         {
             //Introduce some catches for wrong input
@@ -80,13 +111,15 @@ namespace RealRegressionExercises
 
 
         /// <summary>
-        /// Puts into action the program, calculates the relavant data, plots it, and displays information.
+        /// Executes the main program logic, calculates relevant data, plots it, and displays information.
         /// </summary>
 
         public void Program()
         {
-            double[] xData = Plotting.GetData(file_path, Col1);
-            double[] yData = Plotting.GetData(file_path, Col2);
+            //double[] xData = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+            //double[] yData = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 25 };
+            double[] xData = Plotting.GetData(file_path, 1);
+            double[] yData = Plotting.GetData(file_path, 2);
             double yIntercept = Plotting.Intercept(Maths.GetMean(xData), Maths.GetMean(yData), Maths.GetCoeff(xData, yData));
             double[] yFit = Plotting.GetFit(Maths.GetCoeff(xData, yData), xData, yIntercept);
 
@@ -109,6 +142,16 @@ namespace RealRegressionExercises
             MyWpfPlot.Refresh();
         }
 
+        /// <summary>
+        /// Handles the button click event to open a file dialog.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The event data.</param>
+        private void Button_Click1(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog file = new OpenFileDialog();
+            file_path = file.file_path;
+        }
     }
 
     public class Plotting {
@@ -149,6 +192,13 @@ namespace RealRegressionExercises
 
         }
 
+        /// <summary>
+        /// Calculates the fitted values for the given data using the coefficient and intercept.
+        /// </summary>
+        /// <param name="Coeff">The coefficient of the linear regression.</param>
+        /// <param name="data">The input data array.</param>
+        /// <param name="intercept">The intercept of the linear regression.</param>
+        /// <returns> An array of doubles containing the fitted values.</returns>
         public double[] GetFit(double Coeff, double[] data, double intercept)
         {
             double[] yFit = new double[data.Length];
@@ -161,6 +211,14 @@ namespace RealRegressionExercises
 
         }
 
+        /// <summary>
+        /// Calculates the intercept for the linear regression.
+        /// </summary>
+        /// <param name="xMean">The mean of the x values.</param>
+        /// <param name="yMean">The mean of the y values.</param>
+        /// <param name="Coeff">The coefficient of the linear regression.</param>
+        /// <returns>The intercept of the linear regression model .</returns>
+
         public double Intercept(double xMean, double yMean, double Coeff)
         {
             return yMean - Coeff * xMean;
@@ -172,7 +230,12 @@ namespace RealRegressionExercises
     
     public class Calcs
     {
-
+        /// <summary>
+        /// Calculates the coefficient for the linear regression.
+        /// </summary>
+        /// <param name="xData">The x values for the input data.</param>
+        /// <param name="yData">The y values for the input data.</param>
+        /// <returns>The coefficient of the linear regression model.</returns>
         public double GetCoeff(double[] xData, double[] yData)
         {
             double CoVar = 0.0;
@@ -194,6 +257,11 @@ namespace RealRegressionExercises
             return Coeff;
         }
 
+        /// <summary>
+        /// Gets the minimum value from the data array.
+        /// </summary>
+        /// <param name="data">The input data array.</param>
+        /// <returns>The minimum value in the data set as a double.</returns>
         public double GetMin(double[] data)
         {
             double min = data[0];
@@ -206,6 +274,12 @@ namespace RealRegressionExercises
             }
             return min;
         }
+
+        /// <summary>
+        /// Gets the maximum value from the data array.
+        /// </summary>
+        /// <param name="data">The input data array.</param>
+        /// <returns>The maximum value in the data array as a double.</returns>
         public double GetMax(double[] data)
         {
             double max = data[0];
@@ -218,6 +292,12 @@ namespace RealRegressionExercises
             }
             return max;
         }
+
+        /// <summary>
+        /// Calculates the mean value of the data array.
+        /// </summary>
+        /// <param name="data">The input data array.</param>
+        /// <returns>The mean value of the data array as a double.</returns>
         public double GetMean(double[] data)
         {
             double sum = 0.0;
@@ -228,6 +308,12 @@ namespace RealRegressionExercises
             return sum / data.Length;
         }
 
+        /// <summary>
+        /// Calculates the residual sum of squares between the actual and fitted values.
+        /// </summary>
+        /// <param name="actual">The actual data values.</param>
+        /// <param name="fit">The fitted data values.</param>
+        /// <returns>The residual sum of squares.</returns>
         public double ResSum(double[] actual, double[] fit)
         {
             double ResSum = 0.0;
@@ -238,6 +324,12 @@ namespace RealRegressionExercises
             return ResSum;
         }
 
+        /// <summary>
+        /// Calculates the adjusted R-squared value for the fit.
+        /// </summary>
+        /// <param name="actual">The actual data values.</param>
+        /// <param name="fit">The fitted data values.</param>
+        /// <returns>The adjusted R-squared value as a double.</returns>
         public double doubleR(double[] actual, double[] fit)
         {
 
@@ -254,12 +346,14 @@ namespace RealRegressionExercises
 
             adjR = 1 - (RestSum / TotalSum);
 
-            return 1 - ((1 - adjR) * (actual.Length - 1) / (actual.Length - 3));
+            return Math.Max(1 - ((1 - adjR) * (actual.Length - 1) / (actual.Length - 3)), 0);
         }
 
     }
 }
 
-//Make Classes for Data, Math, Plotting (Main Program with button presses/word boxes)
 //Function to modify text box to include various columns
+//If more than 2 total columns of numerical data, allows user to choose which two from list and inputs
+//Function to optimize fit
+//Maybe non-linear regression?
 
