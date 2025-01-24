@@ -3,12 +3,12 @@
   "WorkspaceRootPath": "C:\\Users\\lucky\\source\\repos\\RealRegressionExercises\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{00C09BE3-76F5-4EF4-836E-1341754F55D1}|RealRegressionExercises.csproj|c:\\users\\lucky\\source\\repos\\realregressionexercises\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{00C09BE3-76F5-4EF4-836E-1341754F55D1}|RealRegressionExercises.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{00C09BE3-76F5-4EF4-836E-1341754F55D1}|RealRegressionExercises.csproj|c:\\users\\lucky\\source\\repos\\realregressionexercises\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{00C09BE3-76F5-4EF4-836E-1341754F55D1}|RealRegressionExercises.csproj|solutionrelative:mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{00C09BE3-76F5-4EF4-836E-1341754F55D1}|RealRegressionExercises.csproj|c:\\users\\lucky\\source\\repos\\realregressionexercises\\mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{00C09BE3-76F5-4EF4-836E-1341754F55D1}|RealRegressionExercises.csproj|solutionrelative:mainwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -18,17 +18,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 1,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "MainWindow.xaml.cs",
               "DocumentMoniker": "C:\\Users\\lucky\\source\\repos\\RealRegressionExercises\\MainWindow.xaml.cs",
               "RelativeDocumentMoniker": "MainWindow.xaml.cs",
               "ToolTip": "C:\\Users\\lucky\\source\\repos\\RealRegressionExercises\\MainWindow.xaml.cs",
               "RelativeToolTip": "MainWindow.xaml.cs",
-              "ViewState": "AgIAAEYBAAAAAAAAAAAAwGEBAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAOwAAAAAAAAAAAAUwHgBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-01-03T04:18:53.381Z",
               "IsPinned": true,
@@ -36,7 +36,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 0,
               "Title": "MainWindow.xaml",
               "DocumentMoniker": "C:\\Users\\lucky\\source\\repos\\RealRegressionExercises\\MainWindow.xaml",
               "RelativeDocumentMoniker": "MainWindow.xaml",
@@ -44,7 +44,8 @@
               "RelativeToolTip": "MainWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
               "WhenOpened": "2025-01-03T04:16:31.87Z",
-              "IsPinned": true
+              "IsPinned": true,
+              "EditorCaption": ""
             }
           ]
         }

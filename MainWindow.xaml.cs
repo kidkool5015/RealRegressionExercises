@@ -21,6 +21,7 @@ namespace RealRegressionExercises
         Calcs Maths = new Calcs();
         Plotting Plotting = new Plotting();
         string file_path;
+        bool got_file = false;
 
 
         public MainWindow()
@@ -54,7 +55,7 @@ namespace RealRegressionExercises
         /// <param name="y"> The x values for the input data </param>
         /// <returns> Nothing. </returns>
 
-        public void Regression(double[] x, double[] y, double intercept)
+        public void LinRegression(double[] x, double[] y, double intercept)
         {
             double Coeff = Maths.GetCoeff(x, y);
             Trace.WriteLine(Coeff);
@@ -81,8 +82,32 @@ namespace RealRegressionExercises
         /// <param name="e">The event data.</param>
         public void Button_Click(object sender, RoutedEventArgs e)
         {
+            
+            if (got_file == false)
+            {
+                OpenFileDialog file = new OpenFileDialog();
+                file_path = file.file_path;
+                got_file = true;
+                ButtonText.Text = "Plot";
+                PopUpBox.Text = "";
+            }
+            else
+            {
+                if (file_path == null || (file_path.Substring(4)).Equals("xlsx"))
+                {
+                    OpenFileDialog file = new OpenFileDialog();
+                    file_path = file.file_path;
+                    ButtonText.Text = "Input Data";
+                    got_file = false;
+                    PopUpBox.Text = "Please input a valid file!";
+                }
+                else {
+                    Program();
+                }
+                    
+            }
             Trace.WriteLine("Click");
-            Program();
+            
 
         }
 
@@ -133,7 +158,7 @@ namespace RealRegressionExercises
 
 
             MyWpfPlot.Plot.Add.ScatterPoints(xData, yData);
-            Regression(xData, yData, yIntercept);
+            LinRegression(xData, yData, yIntercept);
 
             BottomBox.Text = "Slope = " + Math.Round(Maths.GetCoeff(xData, yData), 2) + "\n" +
                 "your R2 value for the fit is: " + Math.Round(Maths.doubleR(yData, yFit), 3);
@@ -173,7 +198,6 @@ namespace RealRegressionExercises
                 ExcelWorksheet worksheet = package.Workbook.Worksheets[0];
                 int rowCount = worksheet.Dimension.Rows;
                 double[] data = new double[rowCount];
-                Trace.WriteLine(col);
                 for (int i = 2; i <= rowCount / 30; i++)
                 {
 
@@ -342,7 +366,6 @@ namespace RealRegressionExercises
                 RestSum = this.ResSum(actual, fit);
                 TotalSum += Math.Pow(actual[i] - this.GetMean(actual), 2);
             }
-            Trace.WriteLine("RestSum:" + RestSum / TotalSum);
 
             adjR = 1 - (RestSum / TotalSum);
 
